@@ -42,6 +42,7 @@ android {
 
 dependencies {
     implementation("org.osmdroid:osmdroid-android:6.1.16")
+    implementation("tech.utsmankece:osm-androd-compose:0.0.3")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     ksp("androidx.room:room-compiler:2.6.1")
