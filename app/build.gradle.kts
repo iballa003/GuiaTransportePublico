@@ -41,14 +41,14 @@ android {
 }
 
 dependencies {
-    implementation("org.osmdroid:osmdroid-android:6.1.16")
-    implementation("tech.utsmankece:osm-androd-compose:0.0.3")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
-    ksp("androidx.room:room-compiler:2.6.1")
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-rxjava2:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
+    implementation(libs.osmdroid.android)
+    implementation(libs.osm.androd.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.rxjava2)
+    implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
