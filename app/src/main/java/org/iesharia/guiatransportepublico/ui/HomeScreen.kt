@@ -1,9 +1,17 @@
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -11,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -79,27 +88,40 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
             .copy(zoomButtonVisibility = ZoomButtonVisibility.NEVER)
     }
 
-    OpenStreetMap(
-        modifier = Modifier.fillMaxSize(),
-        cameraState = cameraState,
-        properties = mapProperties // add properties
-    ){
-            Marker(
-                state = rememberMarkerState(
-                    geoPoint = GeoPoint(28.957473, -13.554514)
-                ),
-                title = "Marcador",
-                snippet = "",
-            ) {
-                Column(
-                    modifier = Modifier
-                        .size(100.dp)
-                        .background(color = Color.White, shape = RoundedCornerShape(4.dp))
+    Box(modifier = Modifier.fillMaxSize()) {
+        OpenStreetMap(
+            modifier = Modifier.fillMaxSize(),
+            cameraState = cameraState,
+            properties = mapProperties // add properties
+        ){
+                Marker(
+                    state = rememberMarkerState(
+                        geoPoint = GeoPoint(28.957473, -13.554514)
+                    ),
+                    title = "Marcador",
+                    snippet = "",
                 ) {
-                    Text(text = it.title)
-                    Text(text = it.snippet, fontSize = 10.sp)
+                    Column(
+                        modifier = Modifier
+                            .size(100.dp)
+                            .background(color = Color.White, shape = RoundedCornerShape(4.dp))
+                    ) {
+                        Text(text = it.title)
+                        Text(text = it.snippet, fontSize = 10.sp)
+                    }
                 }
-            }
+        }
+        FloatingActionButton(
+            onClick = { Log.d("MapView", "FAB presionado") },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Centrar mapa"
+            )
+        }
     }
 }
 
