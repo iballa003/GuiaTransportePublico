@@ -24,6 +24,7 @@ import com.utsman.osmandcompose.ZoomButtonVisibility
 import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
 import org.iesharia.guiatransportepublico.data.AppDatabase2
+import org.iesharia.guiatransportepublico.data.Stop
 import org.iesharia.guiatransportepublico.ui.StopViewModel
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.tileprovider.tilesource.XYTileSource
@@ -53,8 +54,9 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
     // Obtener el LifecycleOwner dentro del Composable
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
+    var stops by remember { mutableStateOf(emptyList<Stop>()) }
 
-    StopViewModel.allStops.observe(lifecycleOwner) { stopsList ->
+    viewModel.allStops.observe(lifecycleOwner) { stopsList ->
         stops = stopsList
     }
 
