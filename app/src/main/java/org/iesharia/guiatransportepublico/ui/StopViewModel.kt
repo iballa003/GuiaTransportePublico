@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.iesharia.guiatransportepublico.data.Stop
 
-class StopViewModel(private val repository: MarkerRepository) : ViewModel() {
+class StopViewModel(private val repository: StopRepository) : ViewModel() {
     val allMarkers: LiveData<List<Stop>> = repository.allMarkers
     fun insertData(markerTypes: List<Stop>, markers: List<Stop>) {
         viewModelScope.launch(Dispatchers.IO) {
