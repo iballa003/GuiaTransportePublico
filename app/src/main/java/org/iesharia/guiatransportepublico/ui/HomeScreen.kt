@@ -1,6 +1,4 @@
 import android.annotation.SuppressLint
-import android.graphics.drawable.Drawable
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +6,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,10 +23,8 @@ import com.utsman.osmandcompose.OpenStreetMap
 import com.utsman.osmandcompose.ZoomButtonVisibility
 import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.iesharia.guiatransportepublico.data.AppDatabase2
+import org.iesharia.guiatransportepublico.ui.StopViewModel
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.tileprovider.tilesource.XYTileSource
 import org.osmdroid.util.GeoPoint
@@ -53,10 +48,14 @@ val GoogleSat: OnlineTileSourceBase = object : XYTileSource(
 }
 @SuppressLint("DiscouragedApi")
 @Composable
-fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2) {
+fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel) {
+
     // Obtener el LifecycleOwner dentro del Composable
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
+    StopViewModel.allStops.observe(lifecycleOwner) { stopsList ->
+        stops = stopsList
+    }
 
     // define camera state
     val cameraState = rememberCameraState {
