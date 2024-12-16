@@ -53,6 +53,7 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
     // Obtener el LifecycleOwner dentro del Composable
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
+
     StopViewModel.allStops.observe(lifecycleOwner) { stopsList ->
         stops = stopsList
     }
