@@ -8,6 +8,7 @@ import org.iesharia.guiatransportepublico.ui.theme.GuiaTransportePublicoTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        private lateinit var database: AppDatabase
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
