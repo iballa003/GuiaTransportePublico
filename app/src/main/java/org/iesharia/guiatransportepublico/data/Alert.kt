@@ -6,8 +6,8 @@ import androidx.room.PrimaryKey
 @Entity
 data class Alert(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val nombre: String,
-    val tipo: String,
-    val mensaje: String,
-    val ruta_id: String,
+    val name: String,
+    val type: String,
+    val message: String,
+    val road_id: String,
 )

@@ -6,14 +6,14 @@ import androidx.room.PrimaryKey
     foreignKeys = [ForeignKey(
         entity = Road::class,
         parentColumns = ["id"],
-        childColumns = ["ruta_id"],
+        childColumns = ["road_id"],
         onDelete = ForeignKey.CASCADE
     )]
 )
 data class Stop(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val nombre: String,
+    val name: String,
     val latitude: Double,
     val longitude: Double,
-    val ruta_id: Int
+    val road_id: Int
 )

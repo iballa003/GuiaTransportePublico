@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 @Entity
 data class Road(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val nombre: String,
-    val descripcion: Double,
+    val name: String,
+    val description: Double,
 )
