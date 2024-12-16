@@ -16,5 +16,5 @@ data class Alert(
     val name: String,
     val type: String,
     val message: String,
-    val road_id: String,
+    val road_id: Int,
 )
