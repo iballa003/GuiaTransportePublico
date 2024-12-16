@@ -1,7 +1,6 @@
 package org.iesharia.guiatransportepublico.data
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity
