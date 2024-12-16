@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 @Dao
-interface MarkerDao {
+interface GuideDao {
     @Query("SELECT * FROM Road")
     fun getAllRoads(): LiveData<List<Road>>
 
