@@ -8,10 +8,10 @@ import kotlinx.coroutines.launch
 import org.iesharia.guiatransportepublico.data.Stop
 
 class StopViewModel(private val repository: StopRepository) : ViewModel() {
-    val allMarkers: LiveData<List<Stop>> = repository.allMarkers
-    fun insertData(markerTypes: List<Stop>, markers: List<Stop>) {
+    val allMarkers: LiveData<List<Stop>> = repository.allstops
+    fun insertData(stop: Stop) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.insertData(markerTypes, markers)
+            repository.insertData(stop)
         }
     }
 

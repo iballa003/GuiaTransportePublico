@@ -1,10 +1,13 @@
 package org.iesharia.guiatransportepublico.ui
 
-class MarkerRepository(private val markerDao: MarkerDao) {
-    val allMarkers: LiveData<List<Marker>> = markerDao.getAllMarkers()
+import androidx.lifecycle.LiveData
+import org.iesharia.guiatransportepublico.data.GuideDao
+import org.iesharia.guiatransportepublico.data.Stop
 
-    suspend fun insertData(markerTypes: List<MarkerType>, markers: List<Marker>) {
-        markerDao.insertMarkerTypes(markerTypes)
-        markerDao.insertMarkers(markers)
+class StopRepository(private val guideDao: GuideDao) {
+    val allstops: LiveData<List<Stop>> = guideDao.getAllStops()
+
+    suspend fun insertData(Stop: Stop) {
+        guideDao.insertStop(Stop)
     }
 }
