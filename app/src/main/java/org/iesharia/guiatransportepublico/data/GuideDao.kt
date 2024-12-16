@@ -12,7 +12,7 @@ interface GuideDao {
     fun getAllRoads(): LiveData<List<Road>>
 
     @Query("SELECT * FROM Stop")
-    fun getAllStops(): List<Stop>
+    fun getAllStops(): LiveData<List<Stop>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRoad(road: Road) : Long
