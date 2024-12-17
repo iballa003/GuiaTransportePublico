@@ -1,18 +1,24 @@
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,12 +26,14 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.utsman.osmandcompose.DefaultMapProperties
@@ -150,3 +158,95 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
     }
 }
 
+//fun FormStop(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel){
+
+//}
+@Composable
+fun FormAddStop(viewModel: StopViewModel) {
+    val coroutineScope = rememberCoroutineScope()
+
+    // Estados locales para los campos del formulario
+    var nombreParada by remember { mutableStateOf("") }
+    var latitud by remember { mutableStateOf("") }
+    var longitud by remember { mutableStateOf("") }
+    var mensajeExito by remember { mutableStateOf("") }
+
+    // Variables para almacenar latitud y longitud como Double
+    var latitudDouble: Double? by remember { mutableStateOf(null) }
+    var longitudDouble: Double? by remember { mutableStateOf(null) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Agregar Nueva Parada", modifier = Modifier.padding(8.dp))
+
+        // Campo: Nombre de la Parada
+        OutlinedTextField(
+            value = nombreParada,
+            onValueChange = { nombreParada = it },
+            label = { Text("Nombre de la Parada") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Campo: Latitud
+        OutlinedTextField(
+            value = latitud,
+            onValueChange = { latitud = it },
+            label = { Text("Latitud") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Campo: Longitud
+        OutlinedTextField(
+            value = longitud,
+            onValueChange = { longitud = it },
+            label = { Text("Longitud") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Botón Guardar
+        Button(
+            onClick = {
+                // Validar entrada y guardar en la base de datos
+                if (nombreParada.isNotEmpty() && latitud.isNotEmpty() && longitud.isNotEmpty()) {
+                    coroutineScope.launch {
+                        val parada = Stop(
+                            name = nombreParada,
+                            latitude = latitud.toDouble(),
+                            longitude = longitud.toDouble(),
+                            road_id = 1 // ID de ruta por defecto, ajusta según lógica
+                        )
+                        viewModel.insertData(parada)
+                        mensajeExito = "Parada guardada exitosamente."
+                        // Limpiar campos después de guardar
+                        nombreParada = ""
+                        latitud = ""
+                        longitud = ""
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Guardar")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Mostrar mensaje de éxito
+        if (mensajeExito.isNotEmpty()) {
+            Text(text = mensajeExito, color = androidx.compose.ui.graphics.Color.Green)
+        }
+    }
+}
