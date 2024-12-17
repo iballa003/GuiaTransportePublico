@@ -93,12 +93,20 @@ val GoogleSat: OnlineTileSourceBase = object : XYTileSource(
         ) + "&z=" + MapTileIndex.getZoom(pTileIndex)
     }
 }
+@Composable
+fun HomeScreen(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel){
+    var boolTest by remember { mutableStateOf(true) }
+    if(boolTest){
+        MyMapView(modifier, database, viewModel)
+    }else{
+        SimpleToolbar("LanceGuideBus")
+        FormAddStop(modifier = Modifier, viewModel, {boolTest = true})
+    }
+}
 @SuppressLint("DiscouragedApi")
 @Composable
 fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel) {
 
-    var boolTest by remember { mutableStateOf(true) }
-    if(boolTest){
     // Obtener el LifecycleOwner dentro del Composable
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -155,7 +163,7 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
         }
         FloatingActionButton(
             onClick = {
-                boolTest = false
+
                       },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -171,11 +179,8 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
                          }, modifier = Modifier.padding(start = 5.dp, top = 10.dp)) { Text(text = "Ver lista de paradas") }
         SimpleToolbar("LanceGuideBus")
     }
-    }
-    else{
         SimpleToolbar("LanceGuideBus")
-        FormAddStop(modifier = Modifier, viewModel, {boolTest = true})
-    }
+        FormAddStop(modifier = Modifier, viewModel, {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -354,10 +359,12 @@ fun SimpleToolbar(
 
 @Composable
 fun ListaDeParadasScreen(
+    modifier: Modifier = Modifier,
     viewModel: StopViewModel,
     onEdit: (Stop) -> Unit,
     onDelete: (Stop) -> Unit
 ) {
+    Log.i("MapView","HERE")
     val coroutineScope = rememberCoroutineScope()
 
     // Estado que observa las paradas desde el ViewModel
