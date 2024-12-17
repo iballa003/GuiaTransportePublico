@@ -26,13 +26,18 @@ class StopViewModel(application: Context, private val repository: StopRepository
         }
     }
     private val _rutas = MutableStateFlow<List<Road>>(emptyList())
+    private val _stops = MutableStateFlow<List<Stop>>(emptyList())
     val rutas: StateFlow<List<Road>> get() = _rutas
+    val paradas: StateFlow<List<Stop>> get() = _stops
 
     init {
         viewModelScope.launch {
             // Convertir LiveData a StateFlow usando asFlow()
             guideDao.getAllRoads().asFlow().collect { roadList ->
                 _rutas.value = roadList
+            }
+            guideDao.getAllStops().asFlow().collect { stopList ->
+                _stops.value = stopList
             }
         }
 }
