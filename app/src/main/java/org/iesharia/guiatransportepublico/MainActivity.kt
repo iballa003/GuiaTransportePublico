@@ -2,6 +2,7 @@ package org.iesharia.guiatransportepublico
 
 import FormAddStop
 import MyMapView
+import SimpleToolbar
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,11 +30,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             GuiaTransportePublicoTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    FormAddStop(modifier = Modifier.padding(innerPadding), stopViewModel)
-                //                    MyMapView(
-//                        modifier = Modifier.padding(innerPadding),
-//                        database,
-//                        stopViewModel)
+                    //FormAddStop(modifier = Modifier.padding(innerPadding), stopViewModel, {})
+                    MyMapView(
+                        modifier = Modifier.padding(innerPadding),
+                        database,
+                        stopViewModel)
+
                }
             }
         }
