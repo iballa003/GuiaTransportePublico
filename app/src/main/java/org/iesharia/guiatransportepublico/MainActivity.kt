@@ -1,5 +1,6 @@
 package org.iesharia.guiatransportepublico
 
+import FormAddStop
 import MyMapView
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -19,7 +20,7 @@ import org.iesharia.guiatransportepublico.ui.theme.GuiaTransportePublicoTheme
 class MainActivity : ComponentActivity() {
     private lateinit var database: AppDatabase2
     private val stopViewModel: StopViewModel by viewModels {
-        StopViewModelFactory(StopRepository(AppDatabase2.getDatabase(this).guideDao()))
+        StopViewModelFactory(this, StopRepository(AppDatabase2.getDatabase(this).guideDao()))
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,11 +29,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             GuiaTransportePublicoTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MyMapView(
-                        modifier = Modifier.padding(innerPadding),
-                        database,
-                        stopViewModel)
-                }
+                    FormAddStop(modifier = Modifier.padding(innerPadding), stopViewModel)
+                //                    MyMapView(
+//                        modifier = Modifier.padding(innerPadding),
+//                        database,
+//                        stopViewModel)
+               }
             }
         }
     }
