@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class Road(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
-    val description: Double,
+    val description: String,
 )
