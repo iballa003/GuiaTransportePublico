@@ -174,7 +174,7 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
     }
     else{
         SimpleToolbar("LanceGuideBus")
-        FormAddStop(modifier = Modifier, viewModel, {})
+        FormAddStop(modifier = Modifier, viewModel, {boolTest = true})
     }
 }
 
