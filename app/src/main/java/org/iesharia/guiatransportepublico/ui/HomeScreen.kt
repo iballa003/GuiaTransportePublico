@@ -32,6 +32,7 @@ import com.utsman.osmandcompose.OpenStreetMap
 import com.utsman.osmandcompose.ZoomButtonVisibility
 import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
+import org.iesharia.guiatransportepublico.R
 import org.iesharia.guiatransportepublico.data.AppDatabase2
 import org.iesharia.guiatransportepublico.data.Stop
 import org.iesharia.guiatransportepublico.ui.StopViewModel
@@ -100,6 +101,7 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
                     ),
                     title = "Marcador",
                     snippet = "",
+                    icon = context.getDrawable(R.drawable.bus)
                 ) {
                     Column(
                         modifier = Modifier
