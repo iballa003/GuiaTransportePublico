@@ -10,10 +10,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,8 +34,12 @@ import com.utsman.osmandcompose.OpenStreetMap
 import com.utsman.osmandcompose.ZoomButtonVisibility
 import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.iesharia.guiatransportepublico.R
 import org.iesharia.guiatransportepublico.data.AppDatabase2
+import org.iesharia.guiatransportepublico.data.Road
 import org.iesharia.guiatransportepublico.data.Stop
 import org.iesharia.guiatransportepublico.ui.StopViewModel
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
@@ -69,7 +75,7 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
     viewModel.allStops.observe(lifecycleOwner) { stopsList ->
         stops = stopsList
     }
-
+    
     // define camera state
     val cameraState = rememberCameraState {
         geoPoint = GeoPoint(28.957473, -13.554514)
@@ -90,6 +96,7 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
+
         OpenStreetMap(
             modifier = Modifier.fillMaxSize(),
             cameraState = cameraState,
@@ -114,7 +121,7 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
                 }
         }
         FloatingActionButton(
-            onClick = { Log.d("MapView", "FAB presionado") },
+            onClick = { Log.i("MapView", "Click") },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp),
@@ -124,6 +131,7 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
                 contentDescription = "Centrar mapa"
             )
         }
+        Button(onClick = {}, modifier = Modifier.padding(start = 5.dp, top = 10.dp)) { Text(text = "Ver lista de paradas") }
     }
 }
 
