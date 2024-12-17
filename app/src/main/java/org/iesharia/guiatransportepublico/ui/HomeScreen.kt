@@ -4,20 +4,28 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -28,6 +36,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -43,7 +53,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.utsman.osmandcompose.DefaultMapProperties
@@ -84,6 +96,7 @@ val GoogleSat: OnlineTileSourceBase = object : XYTileSource(
 @SuppressLint("DiscouragedApi")
 @Composable
 fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel) {
+
     var boolTest by remember { mutableStateOf(true) }
     if(boolTest){
     // Obtener el LifecycleOwner dentro del Composable
@@ -156,9 +169,11 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
         Button(onClick = {
 
                          }, modifier = Modifier.padding(start = 5.dp, top = 10.dp)) { Text(text = "Ver lista de paradas") }
+        SimpleToolbar("LanceGuideBus")
     }
     }
     else{
+        SimpleToolbar("LanceGuideBus")
         FormAddStop(modifier = Modifier, viewModel, {})
     }
 }
@@ -182,7 +197,7 @@ fun FormAddStop(modifier: Modifier = Modifier, viewModel: StopViewModel, onClose
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(start = 16.dp, end = 16.dp, top = 75.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -290,7 +305,7 @@ fun FormAddStop(modifier: Modifier = Modifier, viewModel: StopViewModel, onClose
         IconButton(
             onClick = { onClose() }, // Acción al presionar el botón
             modifier = Modifier.align(Alignment.TopEnd)
-                .padding(8.dp)
+                .padding(top = 55.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
         ) {
@@ -299,6 +314,125 @@ fun FormAddStop(modifier: Modifier = Modifier, viewModel: StopViewModel, onClose
                 contentDescription = "Cerrar",
                 tint = MaterialTheme.colorScheme.primary
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SimpleToolbar(
+    title: String,
+    onNavigationClick: (() -> Unit)? = null, // Acción para el botón de navegación
+    navigationIcon: @Composable (() -> Unit)? = null // Ícono de navegación opcional
+) {
+    // Encabezado
+    TopAppBar(
+        title = {
+            Text(
+                text = title,
+                color = Color.White,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Start
+            )
+        },
+        navigationIcon = {
+            if (navigationIcon != null && onNavigationClick != null) {
+                IconButton(onClick = onNavigationClick) {
+                    navigationIcon()
+                }
+            }
+        },
+
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+    )
+}
+
+@Composable
+fun ListaDeParadasScreen(
+    viewModel: StopViewModel,
+    onEdit: (Stop) -> Unit,
+    onDelete: (Stop) -> Unit
+) {
+    val coroutineScope = rememberCoroutineScope()
+
+    // Estado que observa las paradas desde el ViewModel
+    val paradas by viewModel.paradas.collectAsState()
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(paradas) { parada ->
+            ParadaCard(
+                parada = parada,
+                onEdit = { onEdit(parada) },
+                onDelete = { onDelete(parada) }
+            )
+        }
+    }
+}
+
+@Composable
+fun ParadaCard(
+    parada: Stop,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Información de la Parada
+            Column {
+                Text(
+                    text = parada.name,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Coordenadas: ${parada.latitude},${parada.longitude}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
+            }
+
+            // Botones de Editar y Borrar
+            Row {
+                // Botón Editar
+                IconButton(onClick = onEdit) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Editar",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                // Botón Borrar
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Borrar",
+                        tint = Color.Red
+                    )
+                }
+            }
         }
     }
 }
