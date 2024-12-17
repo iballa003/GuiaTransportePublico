@@ -102,11 +102,12 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
             cameraState = cameraState,
             properties = mapProperties // add properties
         ){
+            stops.forEach { parada ->
                 Marker(
                     state = rememberMarkerState(
-                        geoPoint = GeoPoint(28.957473, -13.554514)
+                        geoPoint = GeoPoint(parada.latitude, parada.longitude)
                     ),
-                    title = "Marcador",
+                    title = parada.name,
                     snippet = "",
                     icon = context.getDrawable(R.drawable.bus)
                 ) {
@@ -119,9 +120,21 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
                         Text(text = it.snippet, fontSize = 10.sp)
                     }
                 }
+            }
         }
         FloatingActionButton(
-            onClick = { Log.i("MapView", "Click") },
+            onClick = {
+//                CoroutineScope(Dispatchers.IO).launch {
+//                    try {
+//                        val stop : Stop = Stop(0,"Parada Plaza de Guatiza", 29.074704480990093,-13.480525138816166,1)
+//                        database.guideDao().insertStop(stop)
+//                        Log.i("MapView", "Añadido")
+//                    }
+//                    catch (e: Exception){
+//                        Log.e("MapView", "Error")
+//                    }
+//                }
+                      },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp),
@@ -131,7 +144,9 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
                 contentDescription = "Centrar mapa"
             )
         }
-        Button(onClick = {}, modifier = Modifier.padding(start = 5.dp, top = 10.dp)) { Text(text = "Ver lista de paradas") }
+        Button(onClick = {
+
+                         }, modifier = Modifier.padding(start = 5.dp, top = 10.dp)) { Text(text = "Ver lista de paradas") }
     }
 }
 
