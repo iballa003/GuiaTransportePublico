@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
@@ -22,6 +24,8 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +39,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -79,12 +84,12 @@ val GoogleSat: OnlineTileSourceBase = object : XYTileSource(
 @SuppressLint("DiscouragedApi")
 @Composable
 fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel) {
-
+    var boolTest by remember { mutableStateOf(true) }
+    if(boolTest){
     // Obtener el LifecycleOwner dentro del Composable
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     var stops by remember { mutableStateOf(emptyList<Stop>()) }
-
     viewModel.allStops.observe(lifecycleOwner) { stopsList ->
         stops = stopsList
     }
@@ -137,16 +142,7 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
         }
         FloatingActionButton(
             onClick = {
-//                CoroutineScope(Dispatchers.IO).launch {
-//                    try {
-//                        val stop : Stop = Stop(0,"Parada Plaza de Guatiza", 29.074704480990093,-13.480525138816166,1)
-//                        database.guideDao().insertStop(stop)
-//                        Log.i("MapView", "Añadido")
-//                    }
-//                    catch (e: Exception){
-//                        Log.e("MapView", "Error")
-//                    }
-//                }
+                boolTest = false
                       },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -161,14 +157,15 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
 
                          }, modifier = Modifier.padding(start = 5.dp, top = 10.dp)) { Text(text = "Ver lista de paradas") }
     }
+    }
+    else{
+        FormAddStop(modifier = Modifier, viewModel, {})
+    }
 }
 
-//fun FormStop(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel){
-
-//}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormAddStop(modifier: Modifier = Modifier, viewModel: StopViewModel) {
+fun FormAddStop(modifier: Modifier = Modifier, viewModel: StopViewModel, onClose: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
 
     // Estados locales para los campos del formulario
@@ -181,7 +178,7 @@ fun FormAddStop(modifier: Modifier = Modifier, viewModel: StopViewModel) {
     val rutas by viewModel.rutas.collectAsState()
     var expanded by remember { mutableStateOf(false) }
     var selectedRutaName by remember { mutableStateOf("") }
-
+    Box(modifier = Modifier.fillMaxSize()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -287,6 +284,21 @@ fun FormAddStop(modifier: Modifier = Modifier, viewModel: StopViewModel) {
         // Mostrar mensaje de éxito
         if (mensajeExito.isNotEmpty()) {
             Text(text = mensajeExito, color = androidx.compose.ui.graphics.Color.Green)
+        }
+
+    }
+        IconButton(
+            onClick = { onClose() }, // Acción al presionar el botón
+            modifier = Modifier.align(Alignment.TopEnd)
+                .padding(8.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Cerrar",
+                tint = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }
