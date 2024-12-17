@@ -16,6 +16,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -23,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -161,19 +166,21 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
 //fun FormStop(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel){
 
 //}
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormAddStop(viewModel: StopViewModel) {
+fun FormAddStop(modifier: Modifier = Modifier, viewModel: StopViewModel) {
     val coroutineScope = rememberCoroutineScope()
 
     // Estados locales para los campos del formulario
     var nombreParada by remember { mutableStateOf("") }
     var latitud by remember { mutableStateOf("") }
     var longitud by remember { mutableStateOf("") }
+    var selectedRoadId by remember { mutableStateOf<Int?>(null) }
     var mensajeExito by remember { mutableStateOf("") }
 
-    // Variables para almacenar latitud y longitud como Double
-    var latitudDouble: Double? by remember { mutableStateOf(null) }
-    var longitudDouble: Double? by remember { mutableStateOf(null) }
+    val rutas by viewModel.rutas.collectAsState()
+    var expanded by remember { mutableStateOf(false) }
+    var selectedRutaName by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -213,6 +220,39 @@ fun FormAddStop(viewModel: StopViewModel) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(modifier = Modifier.height(8.dp))
+        // Dropdown para seleccionar la Ruta
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = it }
+        ) {
+            OutlinedTextField(
+                readOnly = true,
+                value = selectedRutaName,
+                onValueChange = {},
+                label = { Text("Seleccionar Ruta") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor()
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                rutas.forEach { ruta ->
+                    DropdownMenuItem(
+                        text = { Text(ruta.name) },
+                        onClick = {
+                            selectedRutaName = ruta.name
+                            selectedRoadId = ruta.id
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
