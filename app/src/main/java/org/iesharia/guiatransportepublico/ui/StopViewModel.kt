@@ -25,6 +25,12 @@ class StopViewModel(application: Context, private val repository: StopRepository
             repository.insertData(stop)
         }
     }
+    fun deleteStop(paradaId: Int) {
+        viewModelScope.launch {
+            repository.deleteStop(paradaId)
+        }
+    }
+
     private val _rutas = MutableStateFlow<List<Road>>(emptyList())
     private val _stops = MutableStateFlow<List<Stop>>(emptyList())
     val rutas: StateFlow<List<Road>> get() = _rutas

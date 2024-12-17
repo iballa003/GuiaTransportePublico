@@ -10,4 +10,7 @@ class StopRepository(private val guideDao: GuideDao) {
     suspend fun insertData(Stop: Stop) {
         guideDao.insertStop(Stop)
     }
+    suspend fun deleteStop(id: Int) {
+        guideDao.deleteStop(id)
+    }
 }

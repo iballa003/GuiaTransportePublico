@@ -19,4 +19,7 @@ interface GuideDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertStop(stop: Stop) : Long
+
+    @Query("DELETE FROM Stop WHERE id = :paradaId")
+    suspend fun deleteStop(paradaId: Int)
 }
