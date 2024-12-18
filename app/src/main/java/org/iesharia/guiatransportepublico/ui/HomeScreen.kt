@@ -99,8 +99,8 @@ val GoogleSat: OnlineTileSourceBase = object : XYTileSource(
 fun HomeScreen(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel){
     var screenManager by remember { mutableStateOf("MyMapView") }
     when (screenManager) {
-        "MyMapView" -> MyMapView(modifier, database, viewModel, {screenManager="ListaDeParadasScreen"}, {screenManager="FormAddStop"})
-        "ListaDeParadasScreen" -> ListaDeParadasScreen(modifier, viewModel, onEdit = { parada ->},onDelete = { parada ->viewModel.deleteStop(parada.id)}, {screenManager = "MyMapView"})
+        "MyMapView" -> MyMapView(modifier, database, viewModel, {screenManager="StopListScreen"}, {screenManager="FormAddStop"})
+        "StopListScreen" -> StopListScreen(modifier, viewModel, onEdit = { parada ->},onDelete = { parada ->viewModel.deleteStop(parada.id)}, {screenManager = "MyMapView"})
         else -> FormAddStop(modifier = Modifier, viewModel, {screenManager = "MyMapView"})
     }
 }
@@ -176,7 +176,11 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
         }
         Button(onClick = {
                     verLista()
-                         }, modifier = Modifier.padding(start = 5.dp, top = 80.dp)) { Text(text = "Ver lista de paradas") }
+                         },
+            modifier = Modifier.padding(start = 5.dp, top = 80.dp),
+            shape = RectangleShape) {
+            Text(text = "Ver lista de paradas")
+        }
         SimpleToolbar("LanceGuideBus")
     }
 }
@@ -196,6 +200,7 @@ fun FormAddStop(modifier: Modifier = Modifier, viewModel: StopViewModel, onClose
     val rutas by viewModel.allRoads.collectAsState()
     var expanded by remember { mutableStateOf(false) }
     var selectedRutaName by remember { mutableStateOf("") }
+    SimpleToolbar("LanceGuideBus")
     Box(modifier = Modifier.fillMaxSize()) {
     Column(
         modifier = Modifier
@@ -356,7 +361,7 @@ fun SimpleToolbar(
 }
 
 @Composable
-fun ListaDeParadasScreen(
+fun StopListScreen(
     modifier: Modifier = Modifier,
     viewModel: StopViewModel,
     onEdit: (Stop) -> Unit,
@@ -390,7 +395,7 @@ fun ListaDeParadasScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(paradas) { parada ->
-            ParadaCard(
+            StopCard(
                 parada = parada,
                 onEdit = { onEdit(parada) },
                 onDelete = { onDelete(parada) }
@@ -401,7 +406,7 @@ fun ListaDeParadasScreen(
 }
 
 @Composable
-fun ParadaCard(
+fun StopCard(
     parada: Stop,
     onEdit: () -> Unit,
     onDelete: () -> Unit
