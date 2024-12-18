@@ -146,7 +146,8 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
                 ) {
                     Column(
                         modifier = Modifier
-                            .size(100.dp)
+                            .size(150.dp)
+                            .padding(16.dp)
                             .background(color = Color.White, shape = RoundedCornerShape(4.dp))
                     ) {
                         Text(text = it.title)
