@@ -97,7 +97,7 @@ val GoogleSat: OnlineTileSourceBase = object : XYTileSource(
 fun HomeScreen(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel){
     var screenManager by remember { mutableStateOf("FormAddStop") }
     when (screenManager) {
-        "MyMapView" -> MyMapView(modifier, database, viewModel)
+        "MyMapView" -> MyMapView(modifier, database, viewModel, {screenManager="ListaDeParadasScreen"}, {screenManager="FormAddStop"})
         "ListaDeParadasScreen" -> ListaDeParadasScreen(modifier, viewModel, onEdit = { parada ->},onDelete = { parada ->viewModel.deleteStop(parada.id)})
         else -> FormAddStop(modifier = Modifier, viewModel, {screenManager = "MyMapView"})
     }
@@ -105,7 +105,7 @@ fun HomeScreen(modifier: Modifier = Modifier, database: AppDatabase2, viewModel:
 
 @SuppressLint("DiscouragedApi")
 @Composable
-fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel) {
+fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel, verLista: () -> Unit, crearForm: () -> Unit) {
 
     // Obtener el LifecycleOwner dentro del Composable
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -161,7 +161,7 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
         }
         FloatingActionButton(
             onClick = {
-
+                crearForm()
                       },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -173,7 +173,7 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
             )
         }
         Button(onClick = {
-
+                    verLista()
                          }, modifier = Modifier.padding(start = 5.dp, top = 10.dp)) { Text(text = "Ver lista de paradas") }
     }
 }

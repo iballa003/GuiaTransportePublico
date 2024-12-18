@@ -1,6 +1,8 @@
 package org.iesharia.guiatransportepublico
 
 import FormAddStop
+import HomeScreen
+import ListaDeParadasScreen
 import MyMapView
 import SimpleToolbar
 import android.os.Bundle
@@ -29,14 +31,21 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GuiaTransportePublicoTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    //FormAddStop(modifier = Modifier.padding(innerPadding), stopViewModel, {})
-                    MyMapView(
-                        modifier = Modifier.padding(innerPadding),
-                        database,
-                        stopViewModel)
+                HomeScreen(modifier = Modifier,database, stopViewModel)
+//                    ListaDeParadasScreen(
+//                        modifier = Modifier,
+//                        viewModel = stopViewModel,
+//                        onEdit = { parada ->
+//                            // Acción de editar la parada
+//                            println("Editar: ${parada.name}")
+//                        },
+//                        onDelete = { parada ->
+//                            // Acción de borrar la parada
+//                            println("Borrar: ${parada.name}")
+//                            stopViewModel.deleteStop(parada.id) // Método para eliminar
+//                        }
+//                    )
 
-               }
             }
         }
     }
