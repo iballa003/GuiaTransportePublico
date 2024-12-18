@@ -95,14 +95,14 @@ val GoogleSat: OnlineTileSourceBase = object : XYTileSource(
 }
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel){
-    var boolTest by remember { mutableStateOf(true) }
-    if(boolTest){
-        MyMapView(modifier, database, viewModel)
-    }else{
-        SimpleToolbar("LanceGuideBus")
-        FormAddStop(modifier = Modifier, viewModel, {boolTest = true})
+    var screenManager by remember { mutableStateOf("FormAddStop") }
+    when (screenManager) {
+        "MyMapView" -> MyMapView(modifier, database, viewModel)
+        "ListaDeParadasScreen" -> ListaDeParadasScreen(modifier, viewModel, onEdit = { parada ->},onDelete = { parada ->viewModel.deleteStop(parada.id)})
+        else -> FormAddStop(modifier = Modifier, viewModel, {screenManager = "MyMapView"})
     }
 }
+
 @SuppressLint("DiscouragedApi")
 @Composable
 fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel) {
@@ -110,10 +110,8 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
     // Obtener el LifecycleOwner dentro del Composable
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
-    var stops by remember { mutableStateOf(emptyList<Stop>()) }
-    viewModel.allStops.observe(lifecycleOwner) { stopsList ->
-        stops = stopsList
-    }
+
+    val stops by viewModel.allStops.collectAsState()
     
     // define camera state
     val cameraState = rememberCameraState {
@@ -177,10 +175,7 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
         Button(onClick = {
 
                          }, modifier = Modifier.padding(start = 5.dp, top = 10.dp)) { Text(text = "Ver lista de paradas") }
-        SimpleToolbar("LanceGuideBus")
     }
-        SimpleToolbar("LanceGuideBus")
-        FormAddStop(modifier = Modifier, viewModel, {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -195,7 +190,7 @@ fun FormAddStop(modifier: Modifier = Modifier, viewModel: StopViewModel, onClose
     var selectedRoadId by remember { mutableStateOf<Int?>(null) }
     var mensajeExito by remember { mutableStateOf("") }
 
-    val rutas by viewModel.rutas.collectAsState()
+    val rutas by viewModel.allRoads.collectAsState()
     var expanded by remember { mutableStateOf(false) }
     var selectedRutaName by remember { mutableStateOf("") }
     Box(modifier = Modifier.fillMaxSize()) {
@@ -364,16 +359,15 @@ fun ListaDeParadasScreen(
     onEdit: (Stop) -> Unit,
     onDelete: (Stop) -> Unit
 ) {
-    Log.i("MapView","HERE")
     val coroutineScope = rememberCoroutineScope()
 
     // Estado que observa las paradas desde el ViewModel
-    val paradas by viewModel.paradas.collectAsState()
-
+    val paradas by viewModel.allStops.collectAsState()
+    SimpleToolbar("LanceGuideBus")
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(top = 80.dp, start = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(paradas) { parada ->
