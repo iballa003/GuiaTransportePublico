@@ -1,6 +1,6 @@
 package org.iesharia.guiatransportepublico
 
-import HomeScreen
+import ScreenManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GuiaTransportePublicoTheme {
-                HomeScreen(modifier = Modifier,database, stopViewModel)
+                ScreenManager(modifier = Modifier,database, stopViewModel)
 
             }
         }

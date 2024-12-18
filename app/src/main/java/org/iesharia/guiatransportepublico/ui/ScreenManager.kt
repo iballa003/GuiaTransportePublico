@@ -90,7 +90,7 @@ val GoogleSat: OnlineTileSourceBase = object : XYTileSource(
     }
 }
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel){
+fun ScreenManager(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel){
     var screenManager by remember { mutableStateOf("MyMapView") }
     when (screenManager) {
         "MyMapView" -> MyMapView(modifier, database, viewModel, {screenManager="StopListScreen"}, {screenManager="FormAddStop"})
