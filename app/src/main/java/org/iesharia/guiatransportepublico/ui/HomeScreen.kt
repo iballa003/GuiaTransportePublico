@@ -65,6 +65,7 @@ import kotlinx.coroutines.launch
 import org.iesharia.guiatransportepublico.R
 import org.iesharia.guiatransportepublico.data.AppDatabase2
 import org.iesharia.guiatransportepublico.data.Stop
+import org.iesharia.guiatransportepublico.data.StopWithRoute
 import org.iesharia.guiatransportepublico.ui.StopViewModel
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.tileprovider.tilesource.XYTileSource
@@ -356,11 +357,12 @@ fun SimpleToolbar(
 fun StopListScreen(
     modifier: Modifier = Modifier,
     viewModel: StopViewModel,
-    onEdit: (Stop) -> Unit,
-    onDelete: (Stop) -> Unit,
+    onEdit: (StopWithRoute) -> Unit,
+    onDelete: (StopWithRoute) -> Unit,
     onClose: () -> Unit
 ) {
-    val coroutineScope = rememberCoroutineScope()
+    // Observar las paradas con rutas
+    val stopsWithRoutes by viewModel.stopsWithRoutes.collectAsState()
 
     // Estado que observa las paradas desde el ViewModel
     val paradas by viewModel.allStops.collectAsState()
@@ -386,11 +388,11 @@ fun StopListScreen(
             .padding(top = 130.dp, start = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(paradas) { parada ->
+        items(stopsWithRoutes) { stopWithRoute ->
             StopCard(
-                parada = parada,
-                onEdit = { onEdit(parada) },
-                onDelete = { onDelete(parada) }
+                stopWithRoute = stopWithRoute,
+                onEdit = { onEdit(stopWithRoute) },
+                onDelete = { onDelete(stopWithRoute) }
             )
         }
     }
@@ -399,7 +401,7 @@ fun StopListScreen(
 
 @Composable
 fun StopCard(
-    parada: Stop,
+    stopWithRoute: StopWithRoute,
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -420,26 +422,26 @@ fun StopCard(
             // Información de la Parada
             Column {
                 Text(
-                    text = parada.name,
+                    text = stopWithRoute.name,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = Color.Black
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Coordenadas: ${parada.latitude},${parada.longitude}",
+                    text = "Coordenadas: ${stopWithRoute.latitude},${stopWithRoute.longitude}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "Ruta: ${parada.road_id}",
+                    text = "Ruta: ${stopWithRoute.routeName}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 // Botones de Editar y Borrar
                 Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                Button(colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03c400)), onClick = {onEdit()}, modifier = Modifier.padding(10.dp), shape = RectangleShape) { Text("Editar") }
+                    Button(colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03c400)), onClick = {onEdit()}, modifier = Modifier.padding(10.dp), shape = RectangleShape) { Text("Editar") }
                     Button(colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFd60e00)), onClick = {onDelete()}, modifier = Modifier.padding(10.dp), shape = RectangleShape) { Text("Borrar") }
                 }
             }

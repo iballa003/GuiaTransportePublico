@@ -18,6 +18,7 @@ import org.iesharia.guiatransportepublico.data.AppDatabase2
 import org.iesharia.guiatransportepublico.data.GuideDao
 import org.iesharia.guiatransportepublico.data.Road
 import org.iesharia.guiatransportepublico.data.Stop
+import org.iesharia.guiatransportepublico.data.StopWithRoute
 
 class StopViewModel(application: Context, private val repository: StopRepository) : ViewModel() {
 
@@ -48,6 +49,13 @@ class StopViewModel(application: Context, private val repository: StopRepository
         )
 
     val allRoads: StateFlow<List<Road>> = guideDao.getAllRoads()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+    // Exponer paradas con sus rutas
+    val stopsWithRoutes: StateFlow<List<StopWithRoute>> = guideDao.getStopsWithRoutes()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

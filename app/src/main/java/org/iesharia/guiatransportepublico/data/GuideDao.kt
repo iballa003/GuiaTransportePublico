@@ -8,6 +8,14 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 @Dao
 interface GuideDao {
+
+    @Query(
+        "SELECT Stop.*, Road.name as routeName " +
+                "FROM Stop " +
+                "INNER JOIN Road ON Stop.road_id = Road.id"
+    )
+    fun getStopsWithRoutes(): Flow<List<StopWithRoute>>
+
     @Query("SELECT * FROM Road")
     fun getAllRoads(): Flow<List<Road>>
 
