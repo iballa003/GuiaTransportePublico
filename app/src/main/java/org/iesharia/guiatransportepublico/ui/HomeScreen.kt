@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -51,6 +52,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
@@ -95,7 +97,7 @@ val GoogleSat: OnlineTileSourceBase = object : XYTileSource(
 }
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: StopViewModel){
-    var screenManager by remember { mutableStateOf("FormAddStop") }
+    var screenManager by remember { mutableStateOf("MyMapView") }
     when (screenManager) {
         "MyMapView" -> MyMapView(modifier, database, viewModel, {screenManager="ListaDeParadasScreen"}, {screenManager="FormAddStop"})
         "ListaDeParadasScreen" -> ListaDeParadasScreen(modifier, viewModel, onEdit = { parada ->},onDelete = { parada ->viewModel.deleteStop(parada.id)}, {screenManager = "MyMapView"})
@@ -174,7 +176,8 @@ fun MyMapView(modifier: Modifier = Modifier, database: AppDatabase2, viewModel: 
         }
         Button(onClick = {
                     verLista()
-                         }, modifier = Modifier.padding(start = 5.dp, top = 10.dp)) { Text(text = "Ver lista de paradas") }
+                         }, modifier = Modifier.padding(start = 5.dp, top = 80.dp)) { Text(text = "Ver lista de paradas") }
+        SimpleToolbar("LanceGuideBus")
     }
 }
 
@@ -379,7 +382,7 @@ fun ListaDeParadasScreen(
             tint = MaterialTheme.colorScheme.primary
         )
     }
-
+    Text(text = "Lista de paradas", fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 70.dp))
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -406,14 +409,14 @@ fun ParadaCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight(),
+            .wrapContentHeight()
+            .padding(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -430,25 +433,17 @@ fun ParadaCard(
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
-            }
-
-            // Botones de Editar y Borrar
-            Row {
-                // Botón Editar
-                IconButton(onClick = onEdit) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Editar",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-                // Botón Borrar
-                IconButton(onClick = onDelete) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Borrar",
-                        tint = Color.Red
-                    )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "Coordenadas: ${parada.latitude},${parada.longitude}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                // Botones de Editar y Borrar
+                Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                Button(colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03c400)), onClick = {onEdit()}, modifier = Modifier.padding(10.dp), shape = RectangleShape) { Text("Editar") }
+                    Button(colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFd60e00)), onClick = {onDelete()}, modifier = Modifier.padding(10.dp), shape = RectangleShape) { Text("Borrar") }
                 }
             }
         }
