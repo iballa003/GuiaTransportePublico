@@ -31,6 +31,6 @@ interface GuideDao {
     @Query("DELETE FROM Stop WHERE id = :paradaId")
     suspend fun deleteStop(paradaId: Int)
 
-    @Query("UPDATE Stop SET name = :name, latitude = :latitude, longitude = :longitude, road_id = :road_id WHERE id =:id")
-    suspend fun updateStop(id: Int, name: String, latitude: Double, longitude: Double, road_id: Int)
+    @Query("UPDATE Stop SET name = :name, latitude = :latitude, longitude = :longitude WHERE id = :id")
+    suspend fun updateStop(id: Int, name: String, latitude: Double, longitude: Double)
 }

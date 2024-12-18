@@ -19,6 +19,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -93,7 +94,7 @@ fun HomeScreen(modifier: Modifier = Modifier, database: AppDatabase2, viewModel:
     var screenManager by remember { mutableStateOf("MyMapView") }
     when (screenManager) {
         "MyMapView" -> MyMapView(modifier, database, viewModel, {screenManager="StopListScreen"}, {screenManager="FormAddStop"})
-        "StopListScreen" -> StopListScreen(modifier, viewModel, onEdit = { parada ->},onDelete = { parada ->viewModel.deleteStop(parada.id)}, {screenManager = "MyMapView"})
+        "StopListScreen" -> StopListScreen(modifier, viewModel, onEdit = { parada ->viewModel.updateStop(parada.id, parada.name, parada.latitude, parada.longitude)},onDelete = { parada ->viewModel.deleteStop(parada.id)}, {screenManager = "MyMapView"})
         else -> FormAddStop(modifier = Modifier, viewModel, {screenManager = "MyMapView"})
     }
 }
@@ -363,9 +364,6 @@ fun StopListScreen(
 ) {
     // Observar las paradas con rutas
     val stopsWithRoutes by viewModel.stopsWithRoutes.collectAsState()
-
-    // Estado que observa las paradas desde el ViewModel
-    val paradas by viewModel.allStops.collectAsState()
     SimpleToolbar("LanceGuideBus")
     Box(modifier = Modifier.fillMaxSize()) {
     IconButton(
@@ -382,7 +380,15 @@ fun StopListScreen(
         )
     }
     Text(text = "Lista de paradas", fontWeight = FontWeight.Bold, fontSize = 25.sp, modifier = Modifier.padding(top = 70.dp))
-    LazyColumn(
+        if (stopsWithRoutes.isEmpty()) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text(text = "No hay paradas disponibles", style = MaterialTheme.typography.bodyLarge)
+            }
+        } else {
+        LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 130.dp, start = 16.dp, end = 16.dp),
@@ -391,10 +397,12 @@ fun StopListScreen(
         items(stopsWithRoutes) { stopWithRoute ->
             StopCard(
                 stopWithRoute = stopWithRoute,
-                onEdit = { onEdit(stopWithRoute) },
+                onEdit = { updatedStop ->
+                    viewModel.updateStop(updatedStop.id, updatedStop.name, updatedStop.latitude, updatedStop.longitude) },
                 onDelete = { onDelete(stopWithRoute) }
             )
         }
+    }
     }
     }
 }
@@ -402,9 +410,10 @@ fun StopListScreen(
 @Composable
 fun StopCard(
     stopWithRoute: StopWithRoute,
-    onEdit: () -> Unit,
+    onEdit: (StopWithRoute) -> Unit,
     onDelete: () -> Unit
 ) {
+    var isEditDialogVisible by remember { mutableStateOf(false) } // Estado para mostrar u ocultar el modal
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -441,10 +450,81 @@ fun StopCard(
                 Spacer(modifier = Modifier.height(8.dp))
                 // Botones de Editar y Borrar
                 Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Button(colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03c400)), onClick = {onEdit()}, modifier = Modifier.padding(10.dp), shape = RectangleShape) { Text("Editar") }
+                    Button(colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03c400)), onClick = {isEditDialogVisible = true}, modifier = Modifier.padding(10.dp), shape = RectangleShape) { Text("Editar") }
                     Button(colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFd60e00)), onClick = {onDelete()}, modifier = Modifier.padding(10.dp), shape = RectangleShape) { Text("Borrar") }
                 }
             }
         }
     }
+    // Modal para Editar la Parada
+    if (isEditDialogVisible) {
+        EditStopDialog(
+            stopWithRoute = stopWithRoute,
+            onDismiss = { isEditDialogVisible = false }, // Cerrar el modal
+            onConfirm = { updatedStop ->
+                isEditDialogVisible = false
+                onEdit(updatedStop) // Confirmar los cambios
+            }
+        )
+    }
+}
+
+@Composable
+fun EditStopDialog(
+    stopWithRoute: StopWithRoute,
+    onDismiss: () -> Unit, // Acción al cerrar el modal
+    onConfirm: (StopWithRoute) -> Unit // Acción al confirmar los cambios
+) {
+    var updatedName by remember { mutableStateOf(stopWithRoute.name) }
+    var updatedLatitude by remember { mutableStateOf(stopWithRoute.latitude.toString()) }
+    var updatedLongitude by remember { mutableStateOf(stopWithRoute.longitude.toString()) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Editar Parada") },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = updatedName,
+                    onValueChange = { updatedName = it },
+                    label = { Text("Nombre de la Parada") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = updatedLatitude,
+                    onValueChange = { updatedLatitude = it },
+                    label = { Text("Latitud") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = updatedLongitude,
+                    onValueChange = { updatedLongitude = it },
+                    label = { Text("Longitud") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val updatedStop = stopWithRoute.copy(
+                        name = updatedName,
+                        latitude = updatedLatitude.toDoubleOrNull() ?: stopWithRoute.latitude,
+                        longitude = updatedLongitude.toDoubleOrNull() ?: stopWithRoute.longitude
+                    )
+                    onConfirm(updatedStop)
+                }
+            ) {
+                Text("Guardar")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        }
+    )
+
 }

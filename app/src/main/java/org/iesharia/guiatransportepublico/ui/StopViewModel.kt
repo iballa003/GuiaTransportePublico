@@ -34,9 +34,9 @@ class StopViewModel(application: Context, private val repository: StopRepository
         }
     }
 
-    fun updateStop(paradaId: Int, name: String, latitude: Double, longitude: Double, road_id: Int) {
+    fun updateStop(paradaId: Int, name: String, latitude: Double, longitude: Double) {
         viewModelScope.launch {
-            repository.updateStop(paradaId, name, latitude, longitude, road_id)
+            guideDao.updateStop(paradaId, name, latitude, longitude)
         }
     }
 
