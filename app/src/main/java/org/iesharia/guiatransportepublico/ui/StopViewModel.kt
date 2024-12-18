@@ -10,7 +10,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.room.Database
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.iesharia.guiatransportepublico.data.AppDatabase2
 import org.iesharia.guiatransportepublico.data.GuideDao
@@ -18,7 +20,7 @@ import org.iesharia.guiatransportepublico.data.Road
 import org.iesharia.guiatransportepublico.data.Stop
 
 class StopViewModel(application: Context, private val repository: StopRepository) : ViewModel() {
-    val allStops: LiveData<List<Stop>> = repository.allstops
+
     private val guideDao = AppDatabase2.getDatabase(application).guideDao()
     fun insertData(stop: Stop) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -31,22 +33,21 @@ class StopViewModel(application: Context, private val repository: StopRepository
         }
     }
 
-    private val _rutas = MutableStateFlow<List<Road>>(emptyList())
-    private val _stops = MutableStateFlow<List<Stop>>(emptyList())
-    val rutas: StateFlow<List<Road>> get() = _rutas
-    val paradas: StateFlow<List<Stop>> get() = _stops
+    // Exponer las paradas y rutas directamente como StateFlow
+    val allStops: StateFlow<List<Stop>> = repository.allstops
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
-    init {
-        viewModelScope.launch {
-            // Convertir LiveData a StateFlow usando asFlow()
-            guideDao.getAllRoads().asFlow().collect { roadList ->
-                _rutas.value = roadList
-            }
-            guideDao.getAllStops().asFlow().collect { stopList ->
-                _stops.value = stopList
-            }
-        }
-}
+    val allRoads: StateFlow<List<Road>> = guideDao.getAllRoads()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
 }
 class StopViewModelFactory(private val context: Context, private val repository: StopRepository) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")

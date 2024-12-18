@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface GuideDao {
     @Query("SELECT * FROM Road")
-    fun getAllRoads(): LiveData<List<Road>>
+    fun getAllRoads(): Flow<List<Road>>
 
     @Query("SELECT * FROM Stop")
-    fun getAllStops(): LiveData<List<Stop>>
+    fun getAllStops(): Flow<List<Stop>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRoad(road: Road) : Long
