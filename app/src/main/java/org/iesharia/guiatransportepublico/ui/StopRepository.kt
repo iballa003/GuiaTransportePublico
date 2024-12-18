@@ -15,4 +15,7 @@ class StopRepository(private val guideDao: GuideDao) {
     suspend fun deleteStop(id: Int) {
         guideDao.deleteStop(id)
     }
+    suspend fun updateStop(id: Int, name: String, latitude: Double, longitude: Double, road_id: Int) {
+        guideDao.updateStop(id, name, latitude, longitude, road_id)
+    }
 }

@@ -33,6 +33,12 @@ class StopViewModel(application: Context, private val repository: StopRepository
         }
     }
 
+    fun updateStop(paradaId: Int, name: String, latitude: Double, longitude: Double, road_id: Int) {
+        viewModelScope.launch {
+            repository.updateStop(paradaId, name, latitude, longitude, road_id)
+        }
+    }
+
     // Exponer las paradas y rutas directamente como StateFlow
     val allStops: StateFlow<List<Stop>> = repository.allstops
         .stateIn(
