@@ -33,4 +33,16 @@ interface GuideDao {
 
     @Query("UPDATE Stop SET name = :name, latitude = :latitude, longitude = :longitude WHERE id = :id")
     suspend fun updateStop(id: Int, name: String, latitude: Double, longitude: Double)
+
+    @Query("SELECT COUNT(*) FROM Road")
+    suspend fun getCountRoads(): Int
+
+    @Query("SELECT COUNT(*) FROM Stop")
+    suspend fun getCountStops(): Int
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllStops(stops: List<Stop>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllRoads(roads: List<Road>)
 }
