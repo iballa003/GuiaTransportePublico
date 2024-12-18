@@ -382,7 +382,7 @@ fun ListaDeParadasScreen(
             tint = MaterialTheme.colorScheme.primary
         )
     }
-    Text(text = "Lista de paradas", fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 70.dp))
+    Text(text = "Lista de paradas", fontWeight = FontWeight.Bold, fontSize = 25.sp, modifier = Modifier.padding(top = 70.dp))
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
