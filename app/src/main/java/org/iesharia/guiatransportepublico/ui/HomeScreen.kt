@@ -98,7 +98,7 @@ fun HomeScreen(modifier: Modifier = Modifier, database: AppDatabase2, viewModel:
     var screenManager by remember { mutableStateOf("FormAddStop") }
     when (screenManager) {
         "MyMapView" -> MyMapView(modifier, database, viewModel, {screenManager="ListaDeParadasScreen"}, {screenManager="FormAddStop"})
-        "ListaDeParadasScreen" -> ListaDeParadasScreen(modifier, viewModel, onEdit = { parada ->},onDelete = { parada ->viewModel.deleteStop(parada.id)})
+        "ListaDeParadasScreen" -> ListaDeParadasScreen(modifier, viewModel, onEdit = { parada ->},onDelete = { parada ->viewModel.deleteStop(parada.id)}, {screenManager = "MyMapView"})
         else -> FormAddStop(modifier = Modifier, viewModel, {screenManager = "MyMapView"})
     }
 }
@@ -357,17 +357,33 @@ fun ListaDeParadasScreen(
     modifier: Modifier = Modifier,
     viewModel: StopViewModel,
     onEdit: (Stop) -> Unit,
-    onDelete: (Stop) -> Unit
+    onDelete: (Stop) -> Unit,
+    onClose: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
 
     // Estado que observa las paradas desde el ViewModel
     val paradas by viewModel.allStops.collectAsState()
     SimpleToolbar("LanceGuideBus")
+    Box(modifier = Modifier.fillMaxSize()) {
+    IconButton(
+        onClick = { onClose() }, // Acción al presionar el botón
+        modifier = Modifier.align(Alignment.TopEnd)
+            .padding(top = 55.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+    ) {
+        Icon(
+            imageVector = Icons.Default.Close,
+            contentDescription = "Cerrar",
+            tint = MaterialTheme.colorScheme.primary
+        )
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 80.dp, start = 16.dp, end = 16.dp),
+            .padding(top = 130.dp, start = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(paradas) { parada ->
@@ -377,6 +393,7 @@ fun ListaDeParadasScreen(
                 onDelete = { onDelete(parada) }
             )
         }
+    }
     }
 }
 
