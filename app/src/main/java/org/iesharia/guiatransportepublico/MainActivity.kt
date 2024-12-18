@@ -32,19 +32,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             GuiaTransportePublicoTheme {
                 HomeScreen(modifier = Modifier,database, stopViewModel)
-//                    ListaDeParadasScreen(
-//                        modifier = Modifier,
-//                        viewModel = stopViewModel,
-//                        onEdit = { parada ->
-//                            // Acción de editar la parada
-//                            println("Editar: ${parada.name}")
-//                        },
-//                        onDelete = { parada ->
-//                            // Acción de borrar la parada
-//                            println("Borrar: ${parada.name}")
-//                            stopViewModel.deleteStop(parada.id) // Método para eliminar
-//                        }
-//                    )
 
             }
         }
