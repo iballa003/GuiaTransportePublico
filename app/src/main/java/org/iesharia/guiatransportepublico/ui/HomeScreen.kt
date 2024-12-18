@@ -450,7 +450,7 @@ fun StopCard(
                 Spacer(modifier = Modifier.height(8.dp))
                 // Botones de Editar y Borrar
                 Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Button(colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03c400)), onClick = {isEditDialogVisible = true}, modifier = Modifier.padding(10.dp), shape = RectangleShape) { Text("Editar") }
+                    Button(colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF126e00)), onClick = {isEditDialogVisible = true}, modifier = Modifier.padding(10.dp), shape = RectangleShape) { Text("Editar") }
                     Button(colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFd60e00)), onClick = {onDelete()}, modifier = Modifier.padding(10.dp), shape = RectangleShape) { Text("Borrar") }
                 }
             }
